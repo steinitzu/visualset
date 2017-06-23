@@ -5,8 +5,12 @@ requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 requests_log.addHandler(logging.StreamHandler(stream=sys.stdout))
 
+from itertools import chain
+from random import shuffle
+
 from visualset import dependencies
 from visualset import songrepo
+from visualset import entities
 
 # bad manual tests
 
@@ -34,10 +38,40 @@ from visualset import songrepo
 #     print(artist['id'])
 
 
-most_prominent = songrepo.most_prominent_artists(40)
+most_prominent = list(songrepo.most_prominent_artists(40))
+print('\n'.join([i['id'] for i in most_prominent]))
+shuffle(most_prominent)
 
-for i in most_prominent:
-    print(i['id'], i['name'])
+AR = entities.AttributeRange
+# ranges = [
+#     AR(0.1, 0.9, 12*60),
+#     AR(0.9, 0.5, 12*60),
+#     AR(0.5, 0.2, 12*60),
+#     AR(0.2, 0.7, 12*60),
+#     AR(0.7, 0.3, 12*60)
+# ]
+
+ranges = [
+    AR(0.0, 1.0, 12*60),
+    AR(1.0, 0.0, 12*60)
+]
+line = entities.Line(
+    'energy',
+    *ranges
+)
+
+line = entities.Line(
+    'valence',
+    *ranges
+)
+
+songs = songrepo.recommendations(most_prominent, line)
+
+songrepo.save_playlist('VisualSet', chain(*songs))
+
+
+# for i in most_prominent:
+#     print(i['id'], i['name'])
 
 
 

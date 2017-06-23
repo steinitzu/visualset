@@ -1,8 +1,14 @@
 from functools import partial
 from collections import Counter
+from itertools import cycle
+from random import sample
+import math
 
 from giveme import inject, register
 from speedyspotify import Spotify
+
+from .entities import AttributeRange, Line
+from .util import chunked
 
 
 @inject
@@ -37,6 +43,47 @@ def get_recommendations(spotify_client: Spotify,
         songs[i]['audio_features'] = af
 
     return sorted(songs, key=lambda x: x['audio_features']['energy'])
+
+
+@inject
+def recommendations(spotify_client: Spotify, artists, line: Line):
+    """
+    Yield recommendations chunks that can be used to construct a playlist on line.
+    """
+    artists = cycle(chunked(artists, 5))
+    me = spotify_client.me().fetch()
+    min_attr = 'min_'+line.attribute_name
+    max_attr = 'max_'+line.attribute_name
+    target_attr = 'target_'+line.attribute_name
+
+    for r in line.ranges:
+        if r.left == r.right:
+            params = {target_attr: r.left}
+        else:
+            params = {
+                min_attr: min(r.left, r.right),
+                max_attr: max(r.left, r.right),
+            }
+        tracks = spotify_client.recommendations(
+            seed_artists=next(artists),
+            country=me['country'],
+            limit=100,
+            **params
+        ).fetch()['tracks']
+       
+        audio_features = spotify_client.audio_features.all(tracks).fetch('items')
+        for i, af in enumerate(audio_features):
+            tracks[i]['audio_features'] = af
+
+        tracks = sorted(tracks, key=lambda x: x['audio_features'][line.attribute_name], reverse=r.reverse)
+
+        ntracks = math.ceil(r.duration_seconds/(60*3.5))  # let's say average song length is 3 minutes for now
+        print(ntracks)
+        print('len tracks', len(tracks), r)
+        # TODO: better sampling for even distribution
+        sampled = tracks[::math.ceil(len(tracks)/ntracks)]
+
+        yield sampled
 
 
 @inject
