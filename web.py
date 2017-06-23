@@ -64,7 +64,6 @@ def submit_line():
         last_point = point
 
     line = Line('energy', *ranges)
-    print(line)
 
     artists = list(most_prominent_artists(count=15))
     shuffle(artists)
