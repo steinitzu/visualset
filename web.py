@@ -53,9 +53,9 @@ def submit_line():
         if i == 0:
             last_point = point
             continue
-        energy = point['energy']/10
+        energy = point['energy']/100
         minute = point['minute']
-        last_energy = last_point['energy']/10
+        last_energy = last_point['energy']/100
         last_minute = last_point['minute']
 
         duration = (minute-last_minute)*60
@@ -66,7 +66,7 @@ def submit_line():
     line = Line('energy', *ranges)
     print(line)
 
-    artists = list(most_prominent_artists(count=30))
+    artists = list(most_prominent_artists(count=15))
     shuffle(artists)
     songs = recommendations(artists, line)
     playlist = save_playlist('VisualSet', chain(*songs))

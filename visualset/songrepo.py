@@ -8,7 +8,7 @@ from giveme import inject, register
 from speedyspotify import Spotify
 
 from .entities import AttributeRange, Line
-from .util import chunked
+from .util import chunked, sampled_songs
 
 
 @inject
@@ -70,19 +70,20 @@ def recommendations(spotify_client: Spotify, artists, line: Line):
             limit=100,
             **params
         ).fetch()['tracks']
-       
+        tracks += spotify_client.recommendations(
+            seed_artists=next(artists),
+            country=me['country'],
+            limit=100,
+            **params
+        ).fetch()['tracks']
+
         audio_features = spotify_client.audio_features.all(tracks).fetch('items')
         for i, af in enumerate(audio_features):
             tracks[i]['audio_features'] = af
 
         tracks = sorted(tracks, key=lambda x: x['audio_features'][line.attribute_name], reverse=r.reverse)
-
-        ntracks = math.ceil(r.duration_seconds/(60*3.5))  # let's say average song length is 3 minutes for now
-        print(ntracks)
-        print('len tracks', len(tracks), r)
-        # TODO: better sampling for even distribution
-        sampled = tracks[::math.ceil(len(tracks)/ntracks)]
-
+        ntracks = math.ceil(r.duration_seconds/(60*3))  # let's say average song length is 3 minutes for now
+        sampled = sampled_songs(tracks, line.attribute_name, r.left, r.right, ntracks)
         yield sampled
 
 
@@ -102,7 +103,7 @@ def saved_songs(spotify_client: Spotify):
     )
 
 
-@register    
+@register
 @inject
 def saved_albums(spotify_client: Spotify):
     yield from spotify_client.ijoin(

@@ -15,12 +15,8 @@ def spotify_client_config():
 
 
 @register
-@inject
-def spotify_token(spotify_auth):
+def spotify_token():
     return session['spotify_token']
-    refresh_token = 'AQBDmSBjpVQwR5kajjSe8S2pGuafzZyuzKtykYoxxfKKTYCJ2z1ajV0XarO56ENoC3niEjyJ4y3mx1AB2WeqU8lLo1dvO6Cyk9BH6Hc6cDt6MAB-uV8ngRjRwjyShU8qah4'  # NOQA
-    new_token = spotify_auth.refresh_access_token(refresh_token)
-    return new_token
 
 
 @register

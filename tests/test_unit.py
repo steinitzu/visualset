@@ -71,3 +71,34 @@ def test_most_prominent():
 
     assert vals == [10, 9, 8]
         
+
+def test_sampled_songs():
+    from visualset.util import sampled_songs
+
+    songs_forward = [
+        {'audio_features': {'energy': round(random.random(), 3)}}
+        for i in range(100)
+    ]
+    songs_backward = [
+        {'audio_features': {'energy': round(random.random(), 3)}}
+        for i in range(100)
+    ]
+    sortkey = lambda x: x['audio_features']['energy']
+
+    sampled_forward = sampled_songs(songs_forward, 'energy', 0.3, 0.9, 10)
+    sampled_backward = sampled_songs(songs_backward, 'energy', 0.9, 0.3, 10)
+
+    assert sorted(sampled_forward, key=sortkey) == sampled_forward
+    assert sorted(sampled_backward, key=sortkey, reverse=True) == sampled_backward
+
+    for i, item in enumerate(sampled_forward):
+        if i == 0:
+            continue
+        assert item['audio_features']['energy'] >= sampled_forward[i-1]['audio_features']['energy']
+
+    for i, item in enumerate(sampled_backward):
+        if i == 0:
+            continue
+        assert item['audio_features']['energy'] <= sampled_backward[i-1]['audio_features']['energy']
+                
+        

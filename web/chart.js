@@ -16,7 +16,7 @@ var chart = new Highcharts.Chart({
     },
     yAxis: {
         min: 0,
-        max: 10,
+        max: 100,
         title: {text: 'Energy!'},
     },
 
@@ -43,25 +43,22 @@ var chart = new Highcharts.Chart({
     },
 
     tooltip: {
-        yDecimals: 2
+        yDecimals: 0
     },
 
     series: [{
         data: [
-            {x: 0, y: 5},
-            {x: 12, y: 5},
-            {x: 24, y: 5},
-            {x: 36, y: 5},
-            {x: 48, y: 5},
-            {x: 60, y: 5},                       
+            {x: 0, y: 50},
+            {x: 12, y: 50},
+            {x: 24, y: 50},
+            {x: 36, y: 50},
+            {x: 48, y: 50},
+            {x: 60, y: 50},                       
         ],
         draggableY: true,
-        dragPrecisionX: 5,
-        dragPrecisionY: 0.5,
-        dragMaxY: 10,
+        dragPrecisionY: 5,
+        dragMaxY: 100,
         dragMinY: 0,
-        dragMaxX: 60,
-        dragMinX: 0,
         cursor: 'move',
     }]
 
