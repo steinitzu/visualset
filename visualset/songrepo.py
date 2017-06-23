@@ -48,22 +48,23 @@ def get_recommendations(spotify_client: Spotify,
 @inject
 def recommendations(spotify_client: Spotify, artists, line: Line):
     """
-    Yield recommendations chunks that can be used to construct a playlist on line.
+    Yield recommendations chunks that can be used to construct a playlist on a line.
     """
     artists = cycle(chunked(artists, 5))
     me = spotify_client.me().fetch()
     min_attr = 'min_'+line.attribute_name
     max_attr = 'max_'+line.attribute_name
-    target_attr = 'target_'+line.attribute_name
 
     for r in line.ranges:
         if r.left == r.right:
-            params = {target_attr: r.left}
-        else:
-            params = {
-                min_attr: min(r.left, r.right),
-                max_attr: max(r.left, r.right),
-            }
+            # Set so we get some songs
+            r.left = max(r.left-0.05, 0.0)
+            r.right = min(r.right+0.05, 1.0)
+        params = {
+            min_attr: min(r.left, r.right),
+            max_attr: max(r.left, r.right),
+        }
+        print(r)
         tracks = spotify_client.recommendations(
             seed_artists=next(artists),
             country=me['country'],
