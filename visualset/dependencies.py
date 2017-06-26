@@ -37,7 +37,7 @@ def spotify_client(spotify_token, spotify_client_config):
         
         def _auth_headers(self):
             headers = super()._auth_headers()
-            headers['spotify_client_id'] = self._client_id
+            headers['Spotify-Client-Id'] = self._client_id
             headers['refreshtoken'] = spotify_token['refresh_token']
             return headers
     
