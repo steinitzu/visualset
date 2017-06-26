@@ -4,13 +4,16 @@ from giveme import inject, register
 from speedyspotify.oauth2 import SpotifyOAuth
 from speedyspotify import Spotify
 
+from . import config
+
 
 @register
 def spotify_client_config():
     return {
-        'client_id': '31c19656d19b45539ed22ad58aa0459c',
-        'client_secret': '0512031d8ecb4611893988f2d428097d',
-        'redirect_uri': 'http://localhost:8000/spotify/callback'
+        'client_id': config.SPOTIFY_CLIENT_ID,
+        'client_secret': config.SPOTIFY_CLIENT_SECRET,
+        'redirect_uri': config.SPOTIFY_REDIRECT_URI,
+        'scope': config.SPOTIFY_SCOPE
     }
 
 
@@ -30,11 +33,14 @@ def spotify_auth(spotify_client_config):
 def spotify_client(spotify_token, spotify_client_config):
 
     class S(Spotify):
+        _client_id = spotify_client_config['client_id']
+        
         def _auth_headers(self):
             headers = super()._auth_headers()
+            headers['spotify_client_id'] = self._client_id
             headers['refreshtoken'] = spotify_token['refresh_token']
             return headers
     
     s = S(access_token=spotify_token, gpool=True, gpool_size=5, pool_size=20)
-    s.prefix = 'http://localhost:8080/v1'
+    s.prefix = config.SPOTPROXY_URL+'/v1'
     return s

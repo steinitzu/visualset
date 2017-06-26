@@ -1,6 +1,7 @@
 from bisect import bisect_left
 from numpy.random import uniform
 from random import sample
+from collections import Counter
 
 
 def chunked(seq, n):
@@ -70,3 +71,37 @@ def sampled_songs(songs, audio_feature, left_val, right_val, n):
         key=lambda x: x['audio_features'][audio_feature],
         reverse=reverse
     )
+
+
+def most_prominent(items, count=20, key='id'):
+    """
+    From a sequence of dicts yield the `count` most
+    prominent items by value of `key`
+    """
+    items = sorted(items, key=lambda x: x[key])
+    item_keys = (item[key] for item in items)
+    items_by_key = {item[key]: item for item in items}
+    
+    counter = Counter(item_keys)
+
+    return (items_by_key[k] for k, v in counter.most_common(count))
+
+
+def uniquify(items, key='id'):
+    """
+    From a sequence of dicts, yield each unique item only once.
+    Uniqueness of an item is determined by the provided key.
+
+    Args:
+        items (sequence): A sequence of dictionaries containing `key`
+        key (hashable type): The dictionary key that determines uniqueness
+    Returns:
+        generator
+    """
+    seen = set()
+    seen_add = seen.add
+    for item in items:
+        if item[key] in seen:
+            continue
+        seen_add(item[key])
+        yield item

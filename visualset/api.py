@@ -12,10 +12,10 @@ from . entities import (
 )
 
 
-def produce_playlist(ranges, audio_attribute='energy'):
+def produce_playlist(data, audio_attribute='energy'):
     ranges = []
     last_point = None
-    for i, point in enumerate(ranges['points']):
+    for i, point in enumerate(data['points']):
         if i == 0:
             last_point = point
             continue
