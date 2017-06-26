@@ -112,7 +112,7 @@ def saved_albums(spotify_client: Spotify):
     )
 
 
-@register    
+@register
 @inject
 def followed_artists(spotify_client: Spotify):
     result = spotify_client.current_user_followed_artists(limit=50)
@@ -136,7 +136,7 @@ def library_artists(saved_songs, saved_albums, followed_artists, top_artists):
     """
     Yield artists from followed artists, all saved songs and
     saved_albums
-    """
+/    """
     for song in saved_songs:
         yield from song['track']['artists']
 

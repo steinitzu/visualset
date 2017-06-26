@@ -11,9 +11,8 @@ from flask import (
     send_from_directory
 )
 
+from visualset.api import produce_playlist
 from visualset.spotify_auth import authorize_url, access_token
-from visualset.entities import AttributeRange, Line
-from visualset.songrepo import recommendations, save_playlist, most_prominent_artists
 
 
 app = Flask(__name__)
@@ -45,28 +44,5 @@ def callback():
 @app.route('/api/lines', methods=['POST'])
 def submit_line():
     data = request.get_json()
-    AR = AttributeRange
-    print(data)
-    ranges = []
-    last_point = None
-    for i, point in enumerate(data['points']):
-        if i == 0:
-            last_point = point
-            continue
-        energy = point['energy']/100
-        minute = point['minute']
-        last_energy = last_point['energy']/100
-        last_minute = last_point['minute']
-
-        duration = (minute-last_minute)*60
-
-        ranges.append(AR(last_energy, energy, duration))
-        last_point = point
-
-    line = Line('energy', *ranges)
-
-    artists = list(most_prominent_artists(count=15))
-    shuffle(artists)
-    songs = recommendations(artists, line)
-    playlist = save_playlist('VisualSet', chain(*songs))
+    playlist = produce_playlist(data, audio_attribute='energy')
     return jsonify(playlist)
