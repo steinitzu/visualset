@@ -65,7 +65,7 @@ var chart = new Highcharts.Chart({
 });
 
 
-function sendData() {
+async function sendData() {
     let data = chart.series[0].data
     let json = {'points': []}
     data.forEach(function(point) {
@@ -74,7 +74,8 @@ function sendData() {
             minute: point.x
         })                
     })
-    fetch('http://localhost:8000/api/lines', {
+    let response
+    response = await fetch('/api/lines', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -82,7 +83,20 @@ function sendData() {
         },
         body: JSON.stringify(json)
     })
-          
-    
+    let jsonData
+    jsonData = await response.json()
+    return jsonData
 }
+
+async function clickButton(e) {
+    let btn = e.target
+    btn.hidden = true
+    document.getElementById('loading').hidden = false
+    let jsonData = await sendData()
+    document.getElementById('loading').hidden = true    
+    btn.hidden = false
+    document.getElementById('result').innerHTML = '<a href="'+jsonData.external_urls.spotify+'">Playlist</a>'
+}
+
+document.getElementById('btn_line_submit').addEventListener('click', clickButton)
             
