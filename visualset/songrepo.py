@@ -27,6 +27,8 @@ def recommendations(spotify_client: Spotify, artists, line: Line):
         params = {
             min_attr: min(r.left, r.right),
             max_attr: max(r.left, r.right),
+            'min_valence': min(r.left, r.right),
+            'max_valence': max(r.left, r.right)
         }
         print(r)
         tracks = spotify_client.recommendations(
