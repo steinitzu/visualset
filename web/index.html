@@ -1,7 +1,29 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://rawgithub.com/highcharts/draggable-points/master/draggable-points.js"></script>
-
-<div id="container" style="height: 400px"></div>
-<div id="drag"></div>
-<div id="drop"></div>
-<script src="/js/chart.js"></script>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+         body {
+             font-family: Verdana, Geneva, sans-serif;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container" style="height: 400px"></div>
+        <div id="drag"></div>
+        <div id="drop"></div>
+        <button type="button" id="btn_line_submit">
+            Make playlist
+        </button>
+        <div id="loading" hidden="true">
+            <span>Building playlist 
+                <i class="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+            </span>
+        </div>
+        <div id="result">            
+        </div>
+        
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://rawgithub.com/highcharts/draggable-points/master/draggable-points.js"></script>
+        <script src="/js/chart.js"></script>
+    </body>
+</html>

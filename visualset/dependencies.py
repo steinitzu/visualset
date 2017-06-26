@@ -41,6 +41,7 @@ def spotify_client(spotify_token, spotify_client_config):
             headers['refreshtoken'] = spotify_token['refresh_token']
             return headers
     
-    s = S(access_token=spotify_token, gpool=True, gpool_size=5, pool_size=20)
+    s = S(access_token=spotify_token, gpool=True, gpool_size=5, pool_size=20,
+          max_retries=10, timeout=30)
     s.prefix = config.SPOTPROXY_URL+'/v1'
     return s
