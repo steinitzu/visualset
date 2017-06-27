@@ -17,7 +17,7 @@ class SubmitButton extends Component {
         return (
             <button
                 type="button"
-                onClick={this.props.actions.onClick}>
+                onClick={this.props.onClick}>
                 {this.props.label}
             </button>
         )
@@ -48,26 +48,81 @@ class PlaylistResult extends Component {
 class EditableChart extends Component {
 
     constructor(props) {
+
         super(props)
+        /* this.props.config.plotOptions.series.point.events.drop = this.handleDrop.bind(this)        */
         this.state = {points: Object.assign({}, this.props.config.series[0].data)}
     }
+    /* 
+     *     handleDrop(e) {
+     *         console.log('heyo')
+     *         console.log(e)
+     *         console.log(this.chart)
+     *         console.log(this.state.points)
+     *     }*/
+
+    afterRender(chart) {
+        console.log(chart)
+        this.chart = chart
+        /* chart.options.plotOptions.series.point.events.drag = function(e) {
+         *     console.log('it works')
+         * }
+         * console.log(chart.options.plotOptions)*/
+    }
+
+    /* chartCallback(chart) {
+     *     console.log(chart)
+     *     console.log(chart.props.config.plotOptions.series.point.events.drag)
+
+     *     chart.props.config.plotOptions.series.point.events.drag = function(e) {
+     *         console.log('it works')
+     *     }
+     *     this.chart = chart
+     * }*/
     
     render() {
         // TODO: Get DOM changes into state
         return (
-            <ReactHighCharts config={this.props.config}>                
+            <ReactHighCharts config={this.props.config}
+                             callback={this.afterRender}
+
+            >
             </ReactHighCharts>
         )        
     }
 }
 
+class ChartFormContainer extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {chart: {points: this.props.chartConfig.series[0].data}}
+    }
+
+    handleSubmit(e) {
+        console.log(this.state)
+    }
+    
+    render() {
+        console.log(this.state)
+        return (
+            <div>
+                <EditableChart config={this.props.chartConfig}></EditableChart>
+                <SubmitButton label="Make playlist" onClick={this.handleSubmit.bind(this)}>
+                </SubmitButton>
+            </div>
+            
+        )
+    }
+}
+
+/* ref={(chart) => this.chartCallback(chart)}*/
 
 
 class App extends Component {
   render() {
     return (
         <div className="App">
-            <EditableChart config={chartConfig}></EditableChart>
+            <ChartFormContainer chartConfig={chartConfig}></ChartFormContainer>
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>

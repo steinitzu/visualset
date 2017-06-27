@@ -24,10 +24,12 @@ export default {
             point: {
                 events: {
                     drag: function (e) {  
-
+                        console.log('it does not work')
                     },
-                    drop: function () {
-                        console.log(this)
+                    drop: function (e) {
+                        console.log(e)
+                    },
+                    click: function(e) {
                     }
                 }
             },
