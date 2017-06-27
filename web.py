@@ -1,5 +1,4 @@
-from itertools import chain
-from random import shuffle
+from functools import wraps
 
 from flask import (
     Flask,
@@ -8,15 +7,30 @@ from flask import (
     session,
     url_for,
     jsonify,
-    send_from_directory
+    send_from_directory,
+    make_response
 )
 
 from visualset.api import produce_playlist
-from visualset.spotify_auth import authorize_url, access_token
+from visualset.spotify_auth import authorize_url, access_token, refresh_if_needed
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'asdj90ajsd90jas9dija0sd'
+
+
+def spotify_login_required(func):
+    @wraps(func)
+    def decorator(*args, **kwargs):
+        current_token = session['spotify_token']
+        try:
+            new_token = refresh_if_needed(current_token, expired_minutes=10)
+        except ValueError as e:
+            return make_response(jsonify(dict(error=str(e))), 403)
+        else:
+            session['spotify_token'] = new_token
+        return func(*args, **kwargs)
+    return decorator
 
 
 @app.route('/')
@@ -42,6 +56,7 @@ def callback():
 
 
 @app.route('/api/lines', methods=['POST'])
+@spotify_login_required
 def submit_line():
     data = request.get_json()
     playlist = produce_playlist(data, audio_attribute='energy')
