@@ -41,7 +41,8 @@ class LoadingSpinner extends Component {
 class PlaylistResult extends Component {
     render() {
         return (
-            <a href={this.props.url} target="_blank">
+            <a href={this.props.url} target="_blank"
+               rel="noopener noreferrer">
                 Your playlist is ready
             </a>
         )
@@ -59,6 +60,7 @@ class EditableChart extends Component {
 
     afterRender(chart) {
         this.chart = chart
+        console.log(chart)
     }
 
     
@@ -132,7 +134,7 @@ class ChartFormContainer extends Component {
 
     handleSubmit(e) {
         spotifyLoginPopup(
-            'http://localhost:8000/spotify/authorize',
+            process.env.REACT_APP_SPOTIFY_AUTH_URL,
             this.loginCallback.bind(this),
             this.loginClosedCallback.bind(this)
         )

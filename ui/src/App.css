@@ -1,3 +1,21 @@
+/*
+Colors
+   #EDF1EA
+   #EABB47
+   #EEA541
+   #9889B2
+   #566886
+ */
+
+.colors-for-things {
+    background: #EDF1EA;
+    background: #EABB47;
+    background: #EEA541;
+    background: #9889B2;
+    background: #566886;
+}
+
+
 .App {
   text-align: center;
 }
@@ -21,4 +39,38 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+
+/* .highcharts-background {
+   fill: salmon;
+   }
+
+   .highcharts-graph {
+   stroke: green;
+   }
+
+   .highcharts-point {
+   fill: green;
+   }
+
+ */
+
+.highcharts-graph {
+    stroke-width: 6px;
+}
+
+.highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 0px;
+    stroke: #d8d8d8;
+}
+
+.highcharts-yaxis-grid .highcharts-grid-line {
+    stroke-width: 0px;
+}
+.highcharts-xaxis .highcharts-tick {
+    stroke: #d8d8d8;
+}
+.highcharts-minor-grid-line {
+    stroke-dasharray: 2, 2;
 }

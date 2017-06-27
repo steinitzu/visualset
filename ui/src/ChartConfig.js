@@ -5,7 +5,7 @@ export default {
     },
     
     title: {
-        text: 'Energy levels'
+        text: ''
     },
 
     xAxis: {
@@ -56,11 +56,21 @@ export default {
             {x: 48, y: 50},
             {x: 60, y: 50},                       
         ],
+        showInLegend: false,
+        name: ' ',
         draggableY: true,
         dragPrecisionY: 5,
         dragMaxY: 100,
         dragMinY: 0,
         cursor: 'move',
-    }]
+        
+    }],
+
+
+    tooltip: {
+        formatter: function() {
+            return 'Energy <strong>' + this.y + '</strong> at minute <strong>' + this.x + '</strong>'
+        }
+    }    
 
 }
