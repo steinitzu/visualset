@@ -43,6 +43,13 @@ def recommendations(spotify_client: Spotify, artists, line: Line):
             limit=100,
             **params
         ).fetch()['tracks']
+        if len(tracks) < 50:
+            tracks += spotify_client.recommendations(
+                seed_artists=next(artists),
+                country=me['country'],
+                limit=100,
+                **params
+            ).fetch()['tracks']            
 
         tracks = list(uniquify(tracks, 'id'))
 
