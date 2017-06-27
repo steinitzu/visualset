@@ -1,4 +1,5 @@
 from functools import wraps
+import os
 
 from flask import (
     Flask,
@@ -8,14 +9,18 @@ from flask import (
     url_for,
     jsonify,
     send_from_directory,
-    make_response
+    make_response,
+    render_template
 )
 
 from visualset.api import produce_playlist
 from visualset.spotify_auth import authorize_url, access_token, refresh_if_needed
 
+template_dir = os.path.realpath(os.path.join(
+    os.path.dirname(__file__), 'web/templates'
+))
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=template_dir)
 app.config['SECRET_KEY'] = 'asdj90ajsd90jas9dija0sd'
 
 
@@ -50,9 +55,10 @@ def authorize():
 
 @app.route('/spotify/callback')
 def callback():
-    token = access_token(request.url)
+    error = request.args.get('error', '')
+    token = access_token(request.url) if not error else {}
     session['spotify_token'] = token
-    return redirect(url_for('index'))
+    return render_template('spotifycallback.html', token=token, error=error)
 
 
 @app.route('/api/lines', methods=['POST'])

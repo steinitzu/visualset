@@ -18,7 +18,7 @@ def access_token(spotify_auth, url):
 
 
 def expires_in(timestamp):
-    return time.time() - timestamp
+    return time() - timestamp
 
 
 @inject

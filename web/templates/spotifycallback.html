@@ -1,0 +1,40 @@
+<html>
+    <head>
+    </head>
+    <body>
+	<div id="token">
+	    {% for key, value in token.items() %}
+		<div class="token_attr" id="{{ key }}" data-value="{{ value }}"></div>
+	    {% endfor %}	    
+	</div>
+        <div id="error" data-value="{{ error }}"></div>
+	<script type="text/javascript">
+         function postMessage(message) {
+             window.opener.postMessage(JSON.stringify(message), '*')
+         }
+
+         function parseAndSend() {
+	     var elements = document.getElementsByClassName('token_attr')
+             var errorElement = document.getElementById('error')
+             var message = {token: {}, error: ''}
+             message.error = errorElement.dataset.value
+             
+	     Array.prototype.forEach.call(elements, function(element) {
+	         if(element.id === 'expires_in') {
+		     message.token[element.id] = parseInt(element.dataset.value)
+		     
+	         } else if(element.id === 'campaign_id') {
+		     message.token[element.id] = parseInt(element.dataset.value)		 
+	         } else {
+		     message.token[element.id] = element.dataset.value
+	         }
+	     });
+             postMessage(message)             
+         }
+
+         parseAndSend()
+         
+
+	</script>
+    </body>
+</html>

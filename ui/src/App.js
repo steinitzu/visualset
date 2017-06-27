@@ -17,7 +17,8 @@ class SubmitButton extends Component {
         return (
             <button
                 type="button"
-                onClick={this.props.onClick}>
+                onClick={this.props.onClick}
+                disabled={this.props.disabled}>
                 {this.props.label}
             </button>
         )
@@ -28,7 +29,10 @@ class SubmitButton extends Component {
 class LoadingSpinner extends Component {
     render() {
         return (
-            <i className="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+            <div>
+                <span>Building your playlist</span>
+                <i className="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+            </div>
         )
     }
 }
@@ -37,7 +41,7 @@ class LoadingSpinner extends Component {
 class PlaylistResult extends Component {
     render() {
         return (
-            <a href={this.props.Url} target="_blank">
+            <a href={this.props.url} target="_blank">
                 Your playlist is ready
             </a>
         )
@@ -50,35 +54,13 @@ class EditableChart extends Component {
     constructor(props) {
 
         super(props)
-        /* this.props.config.plotOptions.series.point.events.drop = this.handleDrop.bind(this)        */
         this.state = {points: Object.assign({}, this.props.config.series[0].data)}
     }
-    /* 
-     *     handleDrop(e) {
-     *         console.log('heyo')
-     *         console.log(e)
-     *         console.log(this.chart)
-     *         console.log(this.state.points)
-     *     }*/
 
     afterRender(chart) {
-        console.log(chart)
         this.chart = chart
-        /* chart.options.plotOptions.series.point.events.drag = function(e) {
-         *     console.log('it works')
-         * }
-         * console.log(chart.options.plotOptions)*/
     }
 
-    /* chartCallback(chart) {
-     *     console.log(chart)
-     *     console.log(chart.props.config.plotOptions.series.point.events.drag)
-
-     *     chart.props.config.plotOptions.series.point.events.drag = function(e) {
-     *         console.log('it works')
-     *     }
-     *     this.chart = chart
-     * }*/
     
     render() {
         // TODO: Get DOM changes into state
@@ -95,27 +77,137 @@ class EditableChart extends Component {
 class ChartFormContainer extends Component {
     constructor(props) {
         super(props)
-        this.state = {chart: {points: this.props.chartConfig.series[0].data}}
+        this.state = {
+            chart: {points: this.props.chartConfig.series[0].data},
+            submitLoading: false,
+            playlistUrl: null
+        }
+    }
+
+    loginCallback(e) {
+        // TODO: react send some message event to window which breaks JSON parsing        
+        console.log(e)
+        let data = JSON.parse(e.data)
+        if(data.error) {
+            this.setState(
+                Object.assign({}, this.state, {submitLoading: false})
+            )
+            return
+        }
+        this.performSubmit()
+    }
+
+    loginClosedCallback(e) {
+        console.log('popup was closed')
+        this.setState(
+            Object.assign({}, this.state, {submitLoading: false})
+        )        
+    }
+
+    async performSubmit() {
+        let json = {'points': []}
+        this.state.chart.points.forEach(function(point) {
+            json.points.push({
+                energy: point.y,
+                minute: point.x
+            })
+        })
+        let response = await fetch('/api/lines', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(json)            
+        })
+        let jsonData
+        jsonData = await response.json()
+        console.log(jsonData)
+        this.setState(
+            Object.assign({}, this.state, {submitLoading: false})
+        )                
+        
     }
 
     handleSubmit(e) {
-        console.log(this.state)
+        spotifyLoginPopup(
+            'http://localhost:8000/spotify/authorize',
+            this.loginCallback.bind(this),
+            this.loginClosedCallback.bind(this)
+        )
+        this.setState(
+            Object.assign({}, this.state, {submitLoading: true})
+        )
+
     }
     
     render() {
-        console.log(this.state)
         return (
             <div>
                 <EditableChart config={this.props.chartConfig}></EditableChart>
-                <SubmitButton label="Make playlist" onClick={this.handleSubmit.bind(this)}>
+                <SubmitButton
+                    label="Make playlist"
+                    onClick={this.handleSubmit.bind(this)}
+                    disabled={this.state.submitLoading}
+                >
                 </SubmitButton>
+                {this.state.submitLoading ? (<LoadingSpinner />) : (<div></div>)}
+                {(this.state.playlistUrl && !this.state.submitLoading) ? (
+                     <PlaylistResult url={this.state.playlistUrl} /> ) : ( <div></div>
+                     )
+                }
+                
             </div>
             
         )
     }
 }
 
-/* ref={(chart) => this.chartCallback(chart)}*/
+/**
+ * @param {string} url - url for the popup window
+ * @param {function} messageCallback - callback for postMessage from popup ( receives event)
+ * @param {function} closedCallback - callback when popup is closed prematurely (optional)
+**/
+function spotifyLoginPopup(url, messageCallback, closedCallback=null) {
+    var width = 450,
+	height = 730,
+	left = (window.innerWidth / 2) - (width / 2),
+	top = (window.innerHeight / 2) - (height / 2);
+
+    function callback(e) {
+        console.log('message')
+        messageCallback(e)
+        clearInterval(timer)
+        e.source.close()
+        window.removeEventListener('message', callback, false)
+    }
+    
+    window.addEventListener('message', callback, false)
+    let popup = window.open(
+        url, 'Spotify login',
+    	'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' +
+	width + ', height=' +
+	height + ', top=' +
+	top + ', left=' + left
+    )    
+
+    function windowClosedCallback() {
+        if(closedCallback != null) {            
+            closedCallback()
+        }
+        window.removeEventListener('message', callback, false)
+    }
+
+    var timer = setInterval(checkChild, 500);
+
+    function checkChild() {
+        if (popup.closed) {
+            windowClosedCallback()
+            clearInterval(timer);
+        }
+    }    
+}
 
 
 class App extends Component {
@@ -123,14 +215,7 @@ class App extends Component {
     return (
         <div className="App">
             <ChartFormContainer chartConfig={chartConfig}></ChartFormContainer>
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
     );
   }
 }
