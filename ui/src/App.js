@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import HighCharts from 'highcharts'
@@ -7,7 +6,13 @@ import makeDraggable from 'highcharts-draggable-points'
 import ReactHighCharts from 'react-highcharts'
 import chartConfig from './ChartConfig'
 
-import { StyledSubmit } from './Styles'
+import { StyledSubmit, StyledPresetButton } from './Styles'
+
+
+const PRESET_GRADUAL_ASCENT = [0, 20, 40, 60, 80, 100]
+const PRESET_GRADUAL_DESCENT = [100, 80, 60, 40, 20, 0]
+const PRESET_DOWN_UP_DOWN = [0, 20, 85, 85, 20, 0]
+const PRESET_UP_DOWN_UP = [85, 60, 10, 10, 60, 85]
 
 
 // monkey patching or something
@@ -18,7 +23,7 @@ class Title extends Component {
     render() {
         return (
             <h2>
-                Move the points on the line to control song intensity.  
+                Move the points on the line to control song intensity
             </h2>
         )
     }
@@ -36,6 +41,48 @@ class SubmitButton extends Component {
             </StyledSubmit>
         )
     }
+}
+
+
+class PresetButton extends Component {
+    render() {
+        return (
+            <StyledPresetButton
+                type="button"
+                onClick={this.props.onClick}                
+            >
+                {this.props.label}
+            </StyledPresetButton>
+        )
+    }
+}
+
+class PresetButtons extends Component {
+
+    render() {
+        return (
+            <div>
+                <label>Or try some examples: </label> 
+                <PresetButton
+                    label="Get psyched!"
+                    onClick={
+                        () => this.props.onClick(...PRESET_GRADUAL_ASCENT)
+                            } />
+                <PresetButton
+                    label="Bring me down"
+                    onClick={
+                        () => this.props.onClick(...PRESET_GRADUAL_DESCENT)
+                            } />
+                <PresetButton
+                    label="Up and down"
+                    onClick={
+                        () => this.props.onClick(...PRESET_DOWN_UP_DOWN)
+                            } />
+            </div>
+        )
+    }
+
+
 }
 
 
@@ -109,11 +156,7 @@ class ChartFormContainer extends Component {
         // TODO: react send some message event to window which breaks JSON parsing        
         console.log(e)
         let data
-        try {
-            data = JSON.parse(e.data)
-        } catch (e) {
-            return
-        }
+        data = JSON.parse(e.data)
         if(data.error) {
             this.setState(
                 Object.assign({}, this.state, {submitLoading: false})
@@ -128,6 +171,20 @@ class ChartFormContainer extends Component {
         this.setState(
             Object.assign({}, this.state, {submitLoading: false})
         )        
+    }
+
+    setYValues(...vals) {
+        let newPoints = []
+        for(var i=0; i < vals.length; i++) {
+            
+            newPoints.push(this.state.chart.points[i])
+            newPoints[i].y = vals[i]
+        }
+
+        this.setState(Object.assign(
+            {}, this.state, {chart: {points: newPoints}}
+        ))
+                                    
     }
 
     async performSubmit() {
@@ -176,7 +233,10 @@ class ChartFormContainer extends Component {
         console.log('playlistUrl', playlistUrl)
         return (
             <div>
+
+
                 <Title></Title>
+                <PresetButtons onClick={this.setYValues.bind(this)}/>
                 <EditableChart
                     config={this.props.chartConfig}>
                 </EditableChart>
@@ -191,6 +251,9 @@ class ChartFormContainer extends Component {
                 >
                 </SubmitButton>
                 {submitLoading ? (<LoadingSpinner />) : (<div></div>)}
+
+
+                
             </div>
         )
     }
@@ -209,7 +272,12 @@ function spotifyLoginPopup(url, messageCallback, closedCallback=null) {
 
     function callback(e) {
         console.log('message')
-        messageCallback(e)
+        try {
+            messageCallback(e)
+        } catch (e) {
+            console.log(e)
+            return null
+        }
         clearInterval(timer)
         e.source.close()
         window.removeEventListener('message', callback, false)

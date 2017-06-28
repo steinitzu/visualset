@@ -26,6 +26,26 @@ display: none;
 }
 `
 
+export const StyledPresetButton = styled.button`
+background: ${NEUTRAL};
+color: ${IN_YOUR_FACE};
+margin: 0.2rem;
+padding: 0.6rem;
+padding-left: 0.6rem;
+padding-right: 0.6rem;
+font-size: 1rem;
+border: none;
+&:hover {
+background: ${PURPLE};
+cursor: pointer;
+}
+&:active {
+}
+&:disabled {
+display: none;
+}
+`
+
 
 export const PlaylistLink = styled.a`
 
