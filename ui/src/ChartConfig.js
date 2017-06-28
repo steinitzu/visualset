@@ -23,14 +23,12 @@ export default {
         series: {
             point: {
                 events: {
-                    drag: function (e) {  
-                        console.log('it does not work')
-                    },
-                    drop: function (e) {
-                        console.log(e)
-                    },
-                    click: function(e) {
-                    }
+                    /* drag: function (e) {  
+                     * },
+                     * drop: function (e) {
+                     * },
+                     * click: function(e) {
+                     * }*/
                 }
             },
             stickyTracking: false
@@ -44,7 +42,10 @@ export default {
     },
 
     tooltip: {
-        yDecimals: 0
+        yDecimals: 0,
+        formatter: function() {
+            return 'Energy <strong>' + this.y + '</strong> at minute <strong>' + this.x + '</strong>'
+        }        
     },
 
     series: [{
@@ -65,12 +66,5 @@ export default {
         cursor: 'move',
         
     }],
-
-
-    tooltip: {
-        formatter: function() {
-            return 'Energy <strong>' + this.y + '</strong> at minute <strong>' + this.x + '</strong>'
-        }
-    }    
 
 }

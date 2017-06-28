@@ -49,7 +49,7 @@ def recommendations(spotify_client: Spotify, artists, line: Line):
                 country=me['country'],
                 limit=100,
                 **params
-            ).fetch()['tracks']            
+            ).fetch()['tracks']
 
         tracks = list(uniquify(tracks, 'id'))
 

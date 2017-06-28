@@ -30,7 +30,7 @@ def produce_playlist(data, audio_attribute='energy'):
         last_point = point
     line = Line(audio_attribute, *ranges)
 
-    artists = list(most_prominent_artists(count=15))
+    artists = list(most_prominent_artists(count=40))
     shuffle(artists)
     songs = recommendations(artists, line)
     playlist = save_playlist('VisualSet', chain(*songs))

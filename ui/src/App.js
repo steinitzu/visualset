@@ -7,20 +7,33 @@ import makeDraggable from 'highcharts-draggable-points'
 import ReactHighCharts from 'react-highcharts'
 import chartConfig from './ChartConfig'
 
+import { StyledSubmit } from './Styles'
+
 
 // monkey patching or something
 makeDraggable(HighCharts)
 
 
-class SubmitButton extends Component {
+class Title extends Component {
     render() {
         return (
-            <button
+            <h2>
+                Move the points on the line to control song intensity.  
+            </h2>
+        )
+    }
+}
+
+
+class SubmitButton extends Component {
+    render() {
+        return (            
+            <StyledSubmit
                 type="button"
                 onClick={this.props.onClick}
                 disabled={this.props.disabled}>
                 {this.props.label}
-            </button>
+            </StyledSubmit>
         )
     }
 }
@@ -41,9 +54,15 @@ class LoadingSpinner extends Component {
 class PlaylistResult extends Component {
     render() {
         return (
+            <iframe src="https://open.spotify.com/embed?uri=spotify:user:erebore:playlist:788MOXyTfcUb1tdw4oC7KJ"
+                    width="250" height="80" frameborder="0" allowtransparency="true">
+                
+            </iframe>
+        )
+        return (
             <a href={this.props.url} target="_blank"
                rel="noopener noreferrer">
-                Your playlist is ready
+                Your playlist is here!
             </a>
         )
     }
@@ -89,7 +108,12 @@ class ChartFormContainer extends Component {
     loginCallback(e) {
         // TODO: react send some message event to window which breaks JSON parsing        
         console.log(e)
-        let data = JSON.parse(e.data)
+        let data
+        try {
+            data = JSON.parse(e.data)
+        } catch (e) {
+            return
+        }
         if(data.error) {
             this.setState(
                 Object.assign({}, this.state, {submitLoading: false})
@@ -121,15 +145,19 @@ class ChartFormContainer extends Component {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(json)            
+            body: JSON.stringify(json)
         })
         let jsonData
         jsonData = await response.json()
-        console.log(jsonData)
         this.setState(
             Object.assign({}, this.state, {submitLoading: false})
-        )                
-        
+        )
+        this.setState(
+            Object.assign(
+                {}, this.state,
+                {playlistUrl: jsonData.external_urls.spotify}
+            )
+        )
     }
 
     handleSubmit(e) {
@@ -141,27 +169,29 @@ class ChartFormContainer extends Component {
         this.setState(
             Object.assign({}, this.state, {submitLoading: true})
         )
-
     }
     
     render() {
+        const { submitLoading, playlistUrl } = this.state
+        console.log('playlistUrl', playlistUrl)
         return (
             <div>
-                <EditableChart config={this.props.chartConfig}></EditableChart>
+                <Title></Title>
+                <EditableChart
+                    config={this.props.chartConfig}>
+                </EditableChart>
+                {(playlistUrl && !submitLoading) ? (
+                     <PlaylistResult url={playlistUrl} /> ) : ( <div></div>
+                     )
+                }
                 <SubmitButton
                     label="Make playlist"
                     onClick={this.handleSubmit.bind(this)}
                     disabled={this.state.submitLoading}
                 >
                 </SubmitButton>
-                {this.state.submitLoading ? (<LoadingSpinner />) : (<div></div>)}
-                {(this.state.playlistUrl && !this.state.submitLoading) ? (
-                     <PlaylistResult url={this.state.playlistUrl} /> ) : ( <div></div>
-                     )
-                }
-                
+                {submitLoading ? (<LoadingSpinner />) : (<div></div>)}
             </div>
-            
         )
     }
 }
