@@ -22,7 +22,7 @@ makeDraggable(HighCharts)
 class Title extends Component {
     render() {
         return (
-            <h2>
+            <h2 className="heading-quick-description">
                 Move the points on the line to control song intensity
             </h2>
         )
@@ -32,13 +32,16 @@ class Title extends Component {
 
 class SubmitButton extends Component {
     render() {
-        return (            
-            <StyledSubmit
+        return (
+            <div>
+            <button
+                className="btn-line-submit"
                 type="button"
                 onClick={this.props.onClick}
                 disabled={this.props.disabled}>
                 {this.props.label}
-            </StyledSubmit>
+            </button>
+            </div>
         )
     }
 }
@@ -47,12 +50,13 @@ class SubmitButton extends Component {
 class PresetButton extends Component {
     render() {
         return (
-            <StyledPresetButton
+            <button
+                className='btn-line-preset'
                 type="button"
                 onClick={this.props.onClick}                
             >
                 {this.props.label}
-            </StyledPresetButton>
+            </button>
         )
     }
 }
@@ -62,7 +66,7 @@ class PresetButtons extends Component {
     render() {
         return (
             <div>
-                <label>Or try some examples: </label> 
+                <label className="label-preset-description">Or try some examples: </label> 
                 <PresetButton
                     label="Get psyched!"
                     onClick={
@@ -78,6 +82,11 @@ class PresetButtons extends Component {
                     onClick={
                         () => this.props.onClick(...PRESET_DOWN_UP_DOWN)
                             } />
+                <PresetButton
+                    label="Down and up"
+                    onClick={
+                        () => this.props.onClick(...PRESET_UP_DOWN_UP)
+                            } />
             </div>
         )
     }
@@ -89,9 +98,13 @@ class PresetButtons extends Component {
 class LoadingSpinner extends Component {
     render() {
         return (
-            <div>
-                <span>Building your playlist</span>
-                <i className="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+            <div className="container-loading">
+                <div>
+                    <span>Building your playlist</span>
+                </div>
+                <div className="spinner-loading">
+                    <i className="fa fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
+                </div>
             </div>
         )
     }
@@ -100,17 +113,21 @@ class LoadingSpinner extends Component {
 
 class PlaylistResult extends Component {
     render() {
+        const uri = this.props.uri
+        const link = 'https://open.spotify.com/embed?uri='+uri
         return (
-            <iframe src="https://open.spotify.com/embed?uri=spotify:user:erebore:playlist:788MOXyTfcUb1tdw4oC7KJ"
-                    width="250" height="80" frameborder="0" allowtransparency="true">
-                
-            </iframe>
-        )
-        return (
-            <a href={this.props.url} target="_blank"
-               rel="noopener noreferrer">
-                Your playlist is here!
-            </a>
+            <div>
+                <iframe
+                    className="iframe-playlist-widget"
+                    title="playlistwidget"
+                    src={link}
+                    width="300"
+                    height="80"
+                    frameborder="0"
+                    theme="white"
+                >
+                </iframe>
+            </div>
         )
     }
 }
@@ -133,11 +150,13 @@ class EditableChart extends Component {
     render() {
         // TODO: Get DOM changes into state
         return (
+            <div className="container-chart">
             <ReactHighCharts config={this.props.config}
                              callback={this.afterRender}
 
             >
             </ReactHighCharts>
+            </div>
         )        
     }
 }
@@ -148,7 +167,7 @@ class ChartFormContainer extends Component {
         this.state = {
             chart: {points: this.props.chartConfig.series[0].data},
             submitLoading: false,
-            playlistUrl: null
+            playlistUri: null
         }
     }
 
@@ -212,7 +231,7 @@ class ChartFormContainer extends Component {
         this.setState(
             Object.assign(
                 {}, this.state,
-                {playlistUrl: jsonData.external_urls.spotify}
+                {playlistUri: jsonData.uri}
             )
         )
     }
@@ -229,31 +248,26 @@ class ChartFormContainer extends Component {
     }
     
     render() {
-        const { submitLoading, playlistUrl } = this.state
-        console.log('playlistUrl', playlistUrl)
+        const { submitLoading, playlistUri } = this.state
+        console.log('playlistUrl', playlistUri)
         return (
-            <div>
-
-
+            <div className="container-chart-form">
                 <Title></Title>
                 <PresetButtons onClick={this.setYValues.bind(this)}/>
                 <EditableChart
                     config={this.props.chartConfig}>
                 </EditableChart>
-                {(playlistUrl && !submitLoading) ? (
-                     <PlaylistResult url={playlistUrl} /> ) : ( <div></div>
+                {(playlistUri && !submitLoading) ? (
+                     <PlaylistResult uri={playlistUri} /> ) : ( <div></div>
                      )
                 }
+                {!submitLoading ? (
                 <SubmitButton
                     label="Make playlist"
                     onClick={this.handleSubmit.bind(this)}
                     disabled={this.state.submitLoading}
-                >
-                </SubmitButton>
-                {submitLoading ? (<LoadingSpinner />) : (<div></div>)}
-
-
-                
+                ></SubmitButton> ) : (<div></div>)}
+                {submitLoading ? (<LoadingSpinner />) : (<div></div>)}                
             </div>
         )
     }

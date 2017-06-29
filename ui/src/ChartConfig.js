@@ -1,7 +1,7 @@
 export default {
 
     chart: {
-        animation: false
+        animation: false,
     },
     
     title: {
@@ -11,12 +11,14 @@ export default {
     xAxis: {
         min: 0,
         max: 60,
-        title: {text: 'Duration (minutes)'}
+        title: {text: 'Duration (minutes)'},
+        labels: {enabled: false}
     },
     yAxis: {
         min: 0,
         max: 100,
         title: {text: 'Energy!'},
+        labels: {enabled: false}        
     },
 
     plotOptions: {

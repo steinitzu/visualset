@@ -7,8 +7,25 @@ Colors
    #566886
  */
 
-.colors-for-things {
-    background: #EDF1EA;
+body {
+    background: #312C47;
+    color: #C34D25;
+    margin: 0;
+    padding: 0;
+}
+
+.all-colors {
+    background: #EDF1EA;    
+    background: #312C47;
+    background: #C34D25;
+    background: #21484E;
+
+    background: #647686;
+    background: #B2B2A4;
+    background: #C49B2A;
+    background: #C34D25;
+    
+
     background: #EABB47;
     background: #EEA541;
     background: #9889B2;
@@ -16,48 +33,105 @@ Colors
 }
 
 
+.btn-line-submit {
+    border: 1px solid #C34D25;
+    color: #C34D25;
+    background: #21484E;
+    padding: 0.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 1.6rem;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.btn-line-submit:hover {
+    background: #C34D25;
+    color: #21484E;
+}
+
+
+.btn-line-preset {
+    border: 1px solid #C34D25;
+    color: #C34D25;
+    background: #EDF1EA;
+    padding: 0.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 1rem;
+    margin: 0.1rem;
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .label-preset-description {
+        display: none;
+    }
+
+    .heading-quick-description {
+        display: none;
+    }
+    .btn-line-preset {
+        padding: 0.2rem;
+        margin: 0.1rem;;
+    }
+}
+
+.btn-line-submit:hover {
+    background: #C34D25;
+    color: #21484E;
+}
+
+.tracklist-view {
+    background: #EDF1EA;
+}
+
+.iframe-playlist-widget {
+    border: none;
+    margin-top: 1rem;
+}
+
+.container-loading {
+    margin-top: 1rem;
+}
+
+.spinner-loading {
+    margin-top: 1rem;
+}
+
+/* .container-chart {
+   height: 40%;
+   }
+
+   .container-chart-form {
+   height: 100%;
+   background: salmon;
+   } */
+
+
+
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.highcharts-container {
+    height: 50%;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.highcharts-background {
+    fill: #EDF1EA;
 }
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-
-/* .highcharts-background {
-   fill: salmon;
-   }
-
-   .highcharts-graph {
-   stroke: green;
-   }
-
-   .highcharts-point {
-   fill: green;
-   }
-
- */
 
 .highcharts-graph {
     stroke-width: 6px;
+    stroke: #E79C35;
+}
+
+.highcharts-point {
+    fill: #9889B2;
 }
 
 .highcharts-xaxis-grid .highcharts-grid-line {
