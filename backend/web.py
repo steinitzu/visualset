@@ -38,22 +38,22 @@ def spotify_login_required(func):
     return decorator
 
 
-@app.route('/')
-def index():
-    return send_from_directory('web', 'index.html')
+# @app.route('/')
+# def index():
+#     return send_from_directory('web', 'index.html')
 
 
-@app.route('/js/<path:path>')
-def js(path):
-    return send_from_directory('web', path)
+# @app.route('/js/<path:path>')
+# def js(path):
+#     return send_from_directory('web', path)
 
 
-@app.route('/spotify/authorize')
+@app.route('/api/spotify/authorize')
 def authorize():
     return redirect(authorize_url())
 
 
-@app.route('/spotify/callback')
+@app.route('/api/spotify/callback')
 def callback():
     error = request.args.get('error', '')
     token = access_token(request.url) if not error else {}
