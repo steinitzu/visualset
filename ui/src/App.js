@@ -143,7 +143,6 @@ class EditableChart extends Component {
 
     afterRender(chart) {
         this.chart = chart
-        console.log(chart)
     }
 
     
@@ -173,7 +172,6 @@ class ChartFormContainer extends Component {
 
     loginCallback(e) {
         // TODO: react send some message event to window which breaks JSON parsing        
-        console.log(e)
         let data
         data = JSON.parse(e.data)
         if(data.error) {
@@ -186,7 +184,6 @@ class ChartFormContainer extends Component {
     }
 
     loginClosedCallback(e) {
-        console.log('popup was closed')
         this.setState(
             Object.assign({}, this.state, {submitLoading: false})
         )        
@@ -249,7 +246,6 @@ class ChartFormContainer extends Component {
     
     render() {
         const { submitLoading, playlistUri } = this.state
-        console.log('playlistUrl', playlistUri)
         return (
             <div className="container-chart-form">
                 <Title></Title>
@@ -285,11 +281,9 @@ function spotifyLoginPopup(url, messageCallback, closedCallback=null) {
 	top = (window.innerHeight / 2) - (height / 2);
 
     function callback(e) {
-        console.log('message')
         try {
             messageCallback(e)
         } catch (e) {
-            console.log(e)
             return null
         }
         clearInterval(timer)
