@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  backend:
+    build: ./backend
+    restart: always
+    command: bash -c "gunicorn web:app -b 0.0.0.0:8000 -k gevent"
+    environment:
+      - VISUALSET_SPOTIFY_ID
+      - VISUALSET_SPOTIFY_SECRET
+      - VISUALSET_SPOTIFY_CALLBACK=${VISUALSET_SPOTIFY_PROD_CALLBACK}
+      - SPOTPROXY_URL
+  nginx:
+    build: ./nginx
+    restart: always
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=visualset.spotifetch.com
+      - LETSENCRYPT_HOST=visualset.spotifetch.com
+      - LETSENCRYPT_EMAIL=steini90@gmail.com
+    links:
+      - backend
+networks:
+  default:
+    external:
+      name: nginx_proxy
