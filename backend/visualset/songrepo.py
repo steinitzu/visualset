@@ -22,8 +22,12 @@ def recommendations(spotify_client: Spotify, artists, line: Line):
     for r in line.ranges:
         if r.left == r.right or abs(r.left-r.right) < 0.1:
             # Set so we get some songs
-            r.left = max(r.left-0.03, 0.0)
-            r.right = min(r.right+0.03, 1.0)
+            if r.left > r.right:
+                r.left = min(r.left+0.03, 1.0)
+                r.right = max(r.right-0.03, 0.0)
+            else:
+                r.left = max(r.left-0.03, 0.0)
+                r.right = min(r.right+0.03, 1.0)
         params = {
             min_attr: min(r.left, r.right),
             max_attr: max(r.left, r.right),
