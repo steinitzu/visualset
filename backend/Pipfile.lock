@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8e08d3b54840ad30a86017cb4144dae700eaf64050442fbb52c43d755f8677f3"
+            "sha256": "74e8fe3e6d4f06c9a8eb6faec6ed2b00a2575d722d341ad7a9eb6eddd7996293"
         },
         "requires": {},
         "sources": [
@@ -12,35 +12,38 @@
         ]
     },
     "default": {
-        "certifi": {
-            "version": "==2017.4.17"
+        "Flask": {
+            "version": "==0.12.2"
         },
-        "chardet": {
-            "version": "==3.0.3"
+        "Jinja2": {
+            "version": "==2.9.6"
         },
-        "gevent": {
-            "version": "==1.2.1"
+        "MarkupSafe": {
+            "version": "==1.0"
+        },
+        "Werkzeug": {
+            "version": "==0.12.2"
+        },
+        "click": {
+            "version": "==6.7"
         },
         "giveme": {
             "version": "==0.2.0"
         },
-        "greenlet": {
-            "version": "==0.4.12"
+        "gunicorn": {
+            "version": "==19.7.1"
         },
-        "idna": {
-            "version": "==2.5"
+        "itsdangerous": {
+            "version": "==0.24"
+        },
+        "numpy": {
+            "version": "==1.13.0"
         },
         "redis": {
             "version": "==2.10.5"
         },
-        "requests": {
-            "version": "==2.17.3"
-        },
         "speedyspotify": {
-            "version": "==0.2.0"
-        },
-        "urllib3": {
-            "version": "==1.21.1"
+            "git": "git://github.com/steinitzu/speedyspotify.git"
         }
     },
     "develop": {}

@@ -3,9 +3,11 @@ verify_ssl = true
 url = "https://pypi.python.org/simple"
 
 [packages]
-speedyspotify = "*"
 giveme = "*"
 redis = "*"
 Flask = "*"
 gunicorn = "*"
 numpy = "*"
+
+[packages.speedyspotify]
+git = "git://github.com/steinitzu/speedyspotify.git"
