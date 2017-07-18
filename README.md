@@ -1,5 +1,6 @@
 # Visual Set
 
-Create a mood based music playlist by drawing the ups and downs on a line graph
+Playlist generator that lets you draw a line on a graph to control song intensity
 
+Live at https://visualset.spotifetch.com/
 # 
